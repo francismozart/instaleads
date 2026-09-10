@@ -68,19 +68,19 @@ export function handoffToApi(
   }
   if (!inbound.ok) return err(inbound.error);
 
-  // Transfer ownership to the API and open the API-active channel state.
+  // Transfer ownership to the API. Walk the valid channel ladder to api_active
+  // from wherever we are (pending → sent → waiting → api_active); steps that do
+  // not apply are no-ops. The final step also stamps ownership + Meta id.
   if (lead.channelOwner !== "api") {
-    const channelRes = transitionChannel(
-      db,
-      lead.id,
-      "api_active",
-      { channelOwner: "api", metaUserId: env.metaUserId },
-      clock,
-    );
-    if (!channelRes.ok) {
-      // From a fresh state we may need to go via waiting_inbound_reply first.
-      transitionChannel(db, lead.id, "waiting_inbound_reply", {}, clock);
-      transitionChannel(db, lead.id, "api_active", { channelOwner: "api", metaUserId: env.metaUserId }, clock);
+    transitionChannel(db, lead.id, "browser_contact_sent", {}, clock);
+    transitionChannel(db, lead.id, "waiting_inbound_reply", {}, clock);
+    transitionChannel(db, lead.id, "api_active", { channelOwner: "api", metaUserId: env.metaUserId }, clock);
+
+    // If ownership still did not flip (an unexpected state), escalate rather
+    // than leave an inconsistent channel.
+    const check = findLeadById(db, lead.id)!;
+    if (check.channelOwner !== "api") {
+      transitionChannel(db, lead.id, "human_review_required", { metaUserId: env.metaUserId }, clock);
     }
   }
 
