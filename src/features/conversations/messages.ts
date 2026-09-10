@@ -155,6 +155,26 @@ export function recordInbound(
   return ok(row);
 }
 
+/**
+ * Cancel a still-queued outbound message (delete the reserved row) so a retry
+ * can re-reserve the same logical phase after a transient send failure.
+ */
+export function cancelOutbound(db: Db, messageId: string): void {
+  db.delete(messages).where(and(eq(messages.id, messageId), eq(messages.status, "queued"))).run();
+}
+
+/** Timestamp of the most recent browser outbound DM (for pacing), or null. */
+export function lastBrowserSendAt(db: Db): Date | null {
+  const row = db
+    .select()
+    .from(messages)
+    .where(and(eq(messages.channel, "browser"), eq(messages.direction, "outbound"), eq(messages.status, "sent")))
+    .orderBy(asc(messages.createdAt))
+    .all()
+    .at(-1);
+  return row ? new Date(row.createdAt) : null;
+}
+
 export function listMessages(db: Db, leadId: string): Message[] {
   return db
     .select()

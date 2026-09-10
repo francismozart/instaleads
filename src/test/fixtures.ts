@@ -1,4 +1,5 @@
 import { parseBusinessConfig, type BusinessConfig } from "@/lib/config";
+import type { Env } from "@/lib/env";
 
 /** A valid BusinessConfig for tests — verified claims only, no affiliate group. */
 export function makeBusinessConfig(overrides: Partial<BusinessConfig> = {}): BusinessConfig {
@@ -50,6 +51,31 @@ export function makeBusinessConfig(overrides: Partial<BusinessConfig> = {}): Bus
     },
   });
   return { ...base, ...overrides };
+}
+
+/** A valid Env for tests (always-open operating window, in-memory DB). */
+export function makeEnv(overrides: Partial<Env> = {}): Env {
+  return {
+    NODE_ENV: "test",
+    OPENAI_API_KEY: "sk-test",
+    OPENAI_MODEL: "gpt-4.1",
+    OPENAI_MODEL_FAST: "gpt-4.1-mini",
+    OPENAI_MONTHLY_BUDGET_USD: 50,
+    CHROME_CDP_URL: "http://127.0.0.1:9222",
+    CHROME_PROFILE_DIR: "./.chrome-profile",
+    INSTAGRAM_APP_SECRET: "secret",
+    INSTAGRAM_PAGE_ACCESS_TOKEN: "token",
+    INSTAGRAM_WEBHOOK_VERIFY_TOKEN: "verify",
+    INSTAGRAM_BUSINESS_ACCOUNT_ID: "1784000000",
+    DATABASE_URL: ":memory:",
+    MAX_DMS_PER_DAY: 30,
+    MIN_SECONDS_BETWEEN_DMS: 90,
+    MAX_SECONDS_BETWEEN_DMS: 240,
+    OPERATING_HOURS: "00:00-23:59",
+    OPERATING_TIMEZONE: "UTC",
+    STATE_ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef",
+    ...overrides,
+  };
 }
 
 /** A monotonically-advancing clock for deterministic timestamps in tests. */

@@ -79,6 +79,20 @@ export function createExperiment(
   return ok({ experiment, variants });
 }
 
+/** Find a running experiment for a given variable, applicable to `funnel`. */
+export function findRunningExperiment(
+  db: Db,
+  variable: string,
+  funnel: "customer" | "affiliate",
+): Experiment | undefined {
+  return db
+    .select()
+    .from(experiments)
+    .where(and(eq(experiments.status, "running"), eq(experiments.variable, variable)))
+    .all()
+    .find((e) => e.funnel === "both" || e.funnel === funnel);
+}
+
 function pickVariant(
   variants: ExperimentVariant[],
   explorationRate: number,

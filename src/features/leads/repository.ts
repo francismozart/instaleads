@@ -11,6 +11,7 @@ import {
   canTransitionPipeline,
   initialChannelState,
   initialPipelineState,
+  pipelineStatesFor,
   type ChannelOwner,
   type ChannelState,
   type Funnel,
@@ -193,6 +194,33 @@ export function transitionChannel(
     recordLeadEvent(tx, leadId, "channel_changed", { from, to, ...options }, clock);
   });
   return ok({ ...lead, ...patch });
+}
+
+/**
+ * Advance a lead forward through its funnel ladder to `target`, one valid step
+ * at a time. Stops at the first illegal step (best-effort, always auditable).
+ */
+export function walkPipelineTo(
+  db: Db,
+  leadId: string,
+  target: PipelineState,
+  clock: () => Date = () => new Date(),
+): Result<Lead, DomainError> {
+  let lead = findLeadById(db, leadId);
+  if (!lead) return err(new DomainError("not_found", `Lead ${leadId} não encontrado`));
+  const ladder = pipelineStatesFor(lead.funnel as Funnel);
+  const targetIdx = ladder.indexOf(target);
+  if (targetIdx < 0) return err(new DomainError("invalid_pipeline_transition", `Estado ${target} não pertence ao funil`));
+
+  let idx = ladder.indexOf(lead.pipelineState as PipelineState);
+  while (idx >= 0 && idx < targetIdx) {
+    const next = ladder[idx + 1]!;
+    const res = transitionPipeline(db, leadId, next, clock);
+    if (!res.ok) break;
+    lead = res.value;
+    idx = ladder.indexOf(next);
+  }
+  return ok(lead);
 }
 
 export function markContacted(
