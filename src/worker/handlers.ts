@@ -29,7 +29,7 @@ import { enqueueException } from "@/features/system/exceptions";
 import { ensureWarmupStart, pauseSystem } from "@/features/system/state";
 import { assignVariant, findRunningExperiment, recordOutcome } from "@/features/experiments/service";
 import type { Funnel, PipelineState } from "@/lib/states";
-import { enqueueJob, rescheduleJob } from "./queue";
+import { enqueueJob } from "./queue";
 import type { HandlerResult, JobHandler, WorkerContext } from "./context";
 
 function history(ctx: WorkerContext, leadId: string) {

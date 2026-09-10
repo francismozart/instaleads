@@ -32,10 +32,25 @@ export default tseslint.config(
     },
   },
   {
-    // Scripts and config talk to the process/console directly.
+    // Scripts and config talk to the process/console directly (Node runtime).
     files: ["scripts/**/*.{ts,mjs}", "*.config.{ts,mjs}"],
+    languageOptions: {
+      globals: {
+        process: "readonly",
+        console: "readonly",
+        setTimeout: "readonly",
+        setInterval: "readonly",
+        clearTimeout: "readonly",
+        clearInterval: "readonly",
+        Buffer: "readonly",
+        URL: "readonly",
+        fetch: "readonly",
+        globalThis: "readonly",
+      },
+    },
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
+      "no-console": "off",
     },
   },
 );

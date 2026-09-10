@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { existsSync, rmSync } from "node:fs";
 import { createClient } from "@/db/client";
 import { runMigrations } from "@/db/migrate";
@@ -9,7 +8,7 @@ import { FakeBrowserClient } from "@/integrations/browser/fake";
 import { FakeInstagramApiClient } from "@/integrations/instagram/api";
 import { FakeConversationEngine } from "@/integrations/openai/fake";
 import { costSummary } from "@/integrations/openai/accounting";
-import { discoverLead, findLeadByHandle, walkPipelineTo } from "@/features/leads/repository";
+import { findLeadByHandle } from "@/features/leads/repository";
 import { handoffToApi } from "@/features/conversations/handoff";
 import { listMessages } from "@/features/conversations/messages";
 import { analyzeExperiment, createExperiment } from "@/features/experiments/service";

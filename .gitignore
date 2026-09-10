@@ -31,6 +31,7 @@ traces/
 # misc
 coverage/
 *.log
+*.tsbuildinfo
 .DS_Store
 .vitest/
 .eslintcache

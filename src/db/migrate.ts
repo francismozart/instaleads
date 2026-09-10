@@ -15,7 +15,6 @@ function main(): void {
   const { db, sqlite } = createClient(url);
   try {
     runMigrations(db);
-    // eslint-disable-next-line no-console
     console.log(`Migrações aplicadas em ${url}`);
   } finally {
     sqlite.close();

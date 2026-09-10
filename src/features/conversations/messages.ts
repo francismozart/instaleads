@@ -1,7 +1,7 @@
 import { and, asc, eq } from "drizzle-orm";
 import type { Db } from "@/db/client";
 import { recordLeadEvent } from "@/db/audit";
-import { leads, messages, type Lead, type Message } from "@/db/schema";
+import { messages, type Lead, type Message } from "@/db/schema";
 import type { BusinessConfig } from "@/lib/config";
 import { checkClaims } from "@/lib/claims-guard";
 import { DomainError } from "@/lib/errors";

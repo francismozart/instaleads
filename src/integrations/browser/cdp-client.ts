@@ -46,7 +46,9 @@ export class CdpBrowserClient implements BrowserClient {
       this.browser = await chromium.connectOverCDP(this.config.cdpUrl);
       return this.browser;
     } catch (e) {
-      throw new Error(`connectOverCDP falhou (${this.config.cdpUrl}): ${e instanceof Error ? e.message : e}`);
+      throw new Error(`connectOverCDP falhou (${this.config.cdpUrl}): ${e instanceof Error ? e.message : e}`, {
+        cause: e,
+      });
     }
   }
 
