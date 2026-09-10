@@ -1,0 +1,36 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# next.js
+.next/
+out/
+next-env.d.ts
+
+# secrets & business identity (never commit)
+.env
+.env.local
+.env*.local
+config/business.json
+
+# operator browser profile (holds a logged-in Instagram session)
+.chrome-profile/
+
+# databases & runtime data
+*.db
+*.db-shm
+*.db-wal
+data/
+backups/
+
+# browser automation artifacts
+screenshots/
+traces/
+
+# misc
+coverage/
+*.log
+.DS_Store
+.vitest/
+.eslintcache
